@@ -1,11 +1,22 @@
-console.log(process.argv); 
+import { fetchData } from "./productsService.js";
 
 const args = process.argv.slice(2);
-if (args.length < 2) 
-    console.error("No se ingresaron los parámetros suficientes");
+if (args.length < 2)
+  console.error("No se ingresaron los parámetros suficientes");
 else {
-    const [ method, ...params ] = args;
-    console.log(`Método: ${method}`);
-    console.log(`Parámetros: ${params.join(", ")}`);
-}
+  const [method, path, ...productData] = args;
+  let config = {
+    method,
+    path,
+    headers: { "Content-Type": "application/json" },
+  };
 
+  if (method === "POST" && productData) {
+    config.body = JSON.stringify({
+      title: productData[0],
+      price: productData[1],
+      category: productData[2],
+    });
+  }
+  fetchData(`https://fakestoreapi.com/${path}`, config)
+}
